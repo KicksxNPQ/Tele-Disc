@@ -85,7 +85,7 @@ def start(config):
                     print("Error")
             # This is probably not the best way to do this but definitely the easiest way. 
             # When message triggers you start discord messanger script in new thread and sends parsed input as sys.argv[1]
-            subprocess.call(["python", "discord_messager.py", str(parsed_response), str(send_channel_id), str(index_of_channel), str(path)])
+            subprocess.call(["python3", "discord_messager.py", str(parsed_response), str(send_channel_id), str(index_of_channel), str(path)])
             # this will forward your message to channel_recieve in Telegram
             await client.forward_messages(output_channel, event.message)  
 

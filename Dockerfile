@@ -1,8 +1,10 @@
 FROM python:3.11.1-buster
 
-WORKDIR /app
-COPY . .
+RUN apt-get install python-is-python3 -y
 
 RUN pip3 install -r requirements.txt
+
+WORKDIR /app
+COPY . .
 
 CMD python3 forwardgram.py config.yml

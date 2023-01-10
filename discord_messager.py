@@ -1,21 +1,22 @@
+import asyncio
+
 import yaml
 import sys
 import logging
 import discord
 import aiohttp
 import os
+import discordM
+
 ''' 
 ------------------------------------------------------------------------
     DISCORD CLIENT - Init the client
 ------------------------------------------------------------------------
 '''
 
-intents = discord.Intents(members=True, guilds=True)
-discord_client = discord.Client(intents=intents)
+discord_client = discordM.DiscordManual().get()
 with open('config.yml', 'rb') as f:
     config = yaml.safe_load(f)
-
-
 
 ''' 
 ------------------------------------------------------------------------
@@ -40,35 +41,36 @@ path_image = sys.argv[4]
 
 except_ids = ["1672577148", "1718929369"]
 
+
 def isAddEveryone(mess, send_channel_id):
-    if (not(send_channel_id in except_ids)):
+    if (not (send_channel_id in except_ids)):
         return mess + "\n @everyone"
     return mess
 
-@discord_client.event
-async def on_ready():
 
-    print('We have logged in as {0.user}'.format(discord_client))
-    print('Awaiting Telegram Message')
-    # My channels are for RTX card drops and PS5
-    #channel_1 = discord_client.get_channel(int(send_channel_id))
-    #print(config["input_channel_ids"])
-    #id_of_channel = config["input_channel_ids"].index(send_channel_id)
-    #channel_name = config["input_channel_ids"][id_of_channel]
+async def sendMessage():
     async with aiohttp.ClientSession() as session:
         try:
-            webhook = discord.Webhook.from_url(config["discord_webhooks"][index_of_channel], session = session)
+            webhook = discord.Webhook.from_url(config["discord_webhooks"][index_of_channel], session=session)
             mess = message.replace("@LeakNhomAD", "")
-            if (path_image != ""):
+            if path_image != "":
                 await webhook.send(content=isAddEveryone(mess, send_channel_id), file=discord.File(path_image))
                 os.remove(path_image)
             else:
                 await webhook.send(content=isAddEveryone(mess, send_channel_id))
-        except:
-            print('Error')
-        finally:    
-            discord_client.close()
+        except Exception as e:
+            print(e)
+        finally:
             quit()
 
-discord_client.run(config["discord_bot_token"])
+@discord_client.event
+async def on_ready():
+    print('We have logged in as {0.user}'.format(discord_client))
+    print('Awaiting Telegram Message')
+    await sendMessage()
+
+if discord_client.is_closed():
+    discord_client.connect(config["discord_bot_token"])
+else:
+    asyncio.run(sendMessage())
 
