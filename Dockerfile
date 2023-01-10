@@ -1,6 +1,6 @@
 FROM python:3.11.1-buster
 
-RUN apt-get install python-is-python3 -y
+RUN apt-get install python-is-python3
 
 RUN pip3 install -r requirements.txt
 
